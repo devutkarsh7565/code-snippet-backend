@@ -1,4 +1,4 @@
-import { CodeSnippet } from "./codeSnippet.type";
+import { ICodeSnippet } from "./codeSnippet.type";
 
 export interface IUser {
   _id: string;
@@ -7,9 +7,9 @@ export interface IUser {
   password: string;
   avatar: string;
   refreshToken: string;
-  codeSnippet: CodeSnippet[];
-  favourites: CodeSnippet[];
-  trash: CodeSnippet[];
+  codeSnippet: ICodeSnippet[];
+  favourites: ICodeSnippet[];
+  trash: ICodeSnippet[];
   createdAt: Date;
   updatedAt: Date;
 }

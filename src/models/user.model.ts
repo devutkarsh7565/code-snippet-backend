@@ -56,6 +56,8 @@ const userSchema = new mongoose.Schema<IUser>(
   }
 );
 
+// mongoose middleware
+
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
@@ -94,3 +96,5 @@ userSchema.methods.generateRefreshToken = function () {
     }
   );
 };
+
+export const User = mongoose.model<IUser>("User", userSchema);
