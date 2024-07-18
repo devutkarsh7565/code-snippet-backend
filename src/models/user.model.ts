@@ -82,8 +82,7 @@ userSchema.methods.generateAccessToken = function () {
     {
       _id: this._id,
       email: this.email,
-      username: this.username,
-      fullName: this.fullName,
+      name: this.name,
     },
     config.accessTokenSecret as string,
     {

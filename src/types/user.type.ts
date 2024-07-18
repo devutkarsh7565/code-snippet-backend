@@ -1,5 +1,6 @@
 import { ICodeSnippet } from "./codeSnippet.type";
 import { ITag } from "./tag.type";
+import jwt from "jsonwebtoken";
 
 export interface IUser {
   _id: string;
@@ -14,4 +15,8 @@ export interface IUser {
   tags: ITag[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface JwtPayloadWithId extends jwt.JwtPayload {
+  _id: string;
 }
