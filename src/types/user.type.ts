@@ -15,6 +15,9 @@ export interface IUser {
   tags: ITag[];
   createdAt: Date;
   updatedAt: Date;
+  isPasswordCorrect(password: string): Promise<boolean>;
+  generateAccessToken(): string;
+  generateRefreshToken(): string;
 }
 
 export interface JwtPayloadWithId extends jwt.JwtPayload {

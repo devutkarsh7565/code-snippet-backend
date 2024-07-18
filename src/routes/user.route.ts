@@ -1,7 +1,7 @@
 import { Router } from "express";
 import path from "node:path";
 import multer from "multer";
-import { createUser } from "../controllers/user.controller";
+import { createUser, userLoggedIn } from "../controllers/user.controller";
 
 const router = Router();
 
@@ -13,5 +13,7 @@ const upload = multer({
 router
   .route("/register")
   .post(upload.fields([{ name: "avatar", maxCount: 1 }]), createUser);
+
+router.post("/login", userLoggedIn);
 
 export default router;

@@ -5,6 +5,32 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { IUser } from "../types/user.type";
 
+const generateAccessAndRefereshTokens = async (
+  userId: string,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      const error = createHttpError(404, "User not found");
+      return next(error);
+    }
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
+    return { accessToken, refreshToken };
+  } catch (err) {
+    const error = createHttpError(
+      500,
+      "Something went wrong while generating referesh and access token"
+    );
+    return next(error);
+  }
+};
+
 const createUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, password } = req.body;
@@ -84,4 +110,50 @@ const createUser = asyncHandler(
   }
 );
 
-export { createUser };
+const userLoggedIn = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      const error = createHttpError(400, "All fields are required");
+      return next(error);
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      const error = createHttpError(401, "Invalid email or password");
+      return next(error);
+    }
+    const isPasswordCorrect = await user?.isPasswordCorrect(password);
+
+    if (!isPasswordCorrect) {
+      const error = createHttpError(401, "Invalid email or password");
+      return next(error);
+    }
+
+    const tokens = await generateAccessAndRefereshTokens(user._id, next);
+
+    if (!tokens) {
+      // An error has already been passed to `next` by `generateAccessAndRefereshTokens`
+      return;
+    }
+
+    const { accessToken, refreshToken } = tokens;
+
+    const loggedInUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+    );
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json({ accessToken, refreshToken, loggedInUser });
+  }
+);
+
+export { createUser, userLoggedIn };
