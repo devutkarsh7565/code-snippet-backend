@@ -1,6 +1,6 @@
 import { CodeSnippet } from "./codeSnippet.type";
 
-export interface User {
+export interface IUser {
   _id: string;
   name: string;
   email: string;
