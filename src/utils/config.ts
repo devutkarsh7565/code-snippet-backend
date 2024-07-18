@@ -9,6 +9,9 @@ const _config = {
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
   accessTokenExpiry: process.env.ACCESS_TOKEN_EXPIRY,
   refreshTokenExpiry: process.env.REFRESH_TOKEN_EXPIRY,
+  cloudinaryCloud: process.env.CLOUDINARY_CLOUD,
+  cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+  cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
 };
 
 export const config = Object.freeze(_config); //read only ke liye
