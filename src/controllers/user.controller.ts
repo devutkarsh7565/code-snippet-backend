@@ -8,6 +8,7 @@ import { IUser } from "../types/user.type";
 const createUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, password } = req.body;
+    console.log(req.file, req?.files, "file");
 
     if (!name || !email || !password) {
       const error = createHttpError(400, "All fields are required");
@@ -32,13 +33,17 @@ const createUser = asyncHandler(
 
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-    const avatarLocalPath = files?.avatar?.[0].path;
+    const avatarLocalPath = files?.avatar?.[0]?.path;
+
+    console.log(avatarLocalPath);
 
     if (!avatarLocalPath) {
       const error = createHttpError(400, "avatar is required");
       return next(error);
     }
     const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    // console.log(avatar?.url, "avatar");
 
     if (!avatar) {
       const error = createHttpError(500, "Error while uploading avatar");
@@ -47,15 +52,19 @@ const createUser = asyncHandler(
 
     let newUser: IUser;
 
+    console.log("user crossed", avatar);
+
     try {
       newUser = await User.create({
         name,
         email,
         password,
-        avatar,
+        avatar: avatar?.url,
       });
     } catch (err) {
-      return next(createHttpError(500, "Error while creating user"));
+      return next(
+        createHttpError(500, "Error while creating user bsc of cloudinary")
+      );
     }
 
     const createdUser = await User.findById(newUser._id).select(

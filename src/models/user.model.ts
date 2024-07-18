@@ -30,7 +30,6 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     refreshToken: {
       type: String,
-      required: true,
     },
     codeSnippet: [
       {
