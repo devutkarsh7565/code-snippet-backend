@@ -1,17 +1,13 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
+import app from "./app";
+import connectDB from "./db/db";
 
-dotenv.config({
-  path: "./.env",
-});
+const startServer = async () => {
+  await connectDB();
+  const port = 3000;
 
-const app: Express = express();
-const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`listining on port :${port}`);
+  });
+};
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
-});
-
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
-});
+startServer();

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-// import { config } from "./config";
+import { config } from "../utils/config";
 
 const connectDB = async () => {
   try {
@@ -10,7 +10,7 @@ const connectDB = async () => {
     mongoose.connection.on("error", (err) => {
       console.error("connection error", err);
     });
-    await mongoose.connect(config.databaseUrl as string);
+    await mongoose.connect(config.databaseUrl as string, {});
   } catch (err) {
     console.error("failed to connect to mongodb", err);
     process.exit(1);
