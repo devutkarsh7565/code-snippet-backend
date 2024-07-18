@@ -50,6 +50,12 @@ const userSchema = new mongoose.Schema<IUser>(
         ref: "CodeSnippet",
       },
     ],
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+      },
+    ],
   },
   {
     timestamps: true,

@@ -1,4 +1,5 @@
 import { ICodeSnippet } from "./codeSnippet.type";
+import { ITag } from "./tag.type";
 
 export interface IUser {
   _id: string;
@@ -10,6 +11,7 @@ export interface IUser {
   codeSnippet: ICodeSnippet[];
   favourites: ICodeSnippet[];
   trash: ICodeSnippet[];
+  tags: ITag[];
   createdAt: Date;
   updatedAt: Date;
 }
