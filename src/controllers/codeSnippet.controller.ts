@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler";
 import createHttpError from "http-errors";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { CodeSnippet } from "../models/codeSnippet.model";
+import { SearchCriteria } from "../types/codeSnippet.type";
 
 const createCodeSnippet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -53,15 +54,39 @@ const createCodeSnippet = asyncHandler(
 const getAllCodeSnippetOfCurrentUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const _req = req as AuthRequest;
-    const codeSnippets = await CodeSnippet.find({ owner: _req.userId });
-    if (!codeSnippets) {
-      const error = createHttpError(404, "No code snippet found");
+    const { title, description } = req.query as {
+      title: string;
+      description: string;
+    };
+
+    console.log(title);
+
+    // Define the searchCriteria with the appropriate type
+    const searchCriteria: SearchCriteria = {
+      owner: _req.userId,
+    };
+
+    if (title) {
+      searchCriteria.title = { $regex: title as string, $options: "i" }; // Case-insensitive regex search
+    }
+
+    if (description) {
+      searchCriteria.description = {
+        $regex: description as string,
+        $options: "i",
+      };
+    }
+
+    const codeSnippets = await CodeSnippet.find(searchCriteria);
+    if (!codeSnippets || codeSnippets.length === 0) {
+      const error = createHttpError(404, "No code snippets found");
       return next(error);
     }
+
     return res.status(200).json({
       success: true,
       codeSnippets,
-      message: "code snippet for Current User fetched successfully",
+      message: "Code snippets for current user fetched successfully",
     });
   }
 );
