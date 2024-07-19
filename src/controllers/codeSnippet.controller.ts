@@ -111,8 +111,43 @@ const getSingleCodeSnippetOfCurrentUser = asyncHandler(
   }
 );
 
+const updateCodeSnippetById = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const _req = req as AuthRequest;
+    const { id } = req.params as { id: string };
+    const { title, description, code, language } = req.body;
+    if (!title || !description || !code || !language) {
+      const error = createHttpError(400, "All fields are required");
+      return next(error);
+    }
+    const codeSnippet = await CodeSnippet.findOne({
+      _id: id,
+      owner: _req.userId,
+    });
+    if (!codeSnippet) {
+      const error = createHttpError(404, "No code snippet found");
+      return next(error);
+    }
+    const updatedCodeSnippet = await CodeSnippet.findByIdAndUpdate(
+      { _id: id },
+      { title, description, code, language },
+      { new: true }
+    );
+    if (!updatedCodeSnippet) {
+      const error = createHttpError(500, "Error while updating code snippet");
+      return next(error);
+    }
+    return res.status(200).json({
+      success: true,
+      message: "code snippet updated successfully",
+      updatedCodeSnippet,
+    });
+  }
+);
+
 export {
   createCodeSnippet,
   getAllCodeSnippetOfCurrentUser,
   getSingleCodeSnippetOfCurrentUser,
+  updateCodeSnippetById,
 };

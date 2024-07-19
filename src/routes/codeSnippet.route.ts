@@ -3,6 +3,7 @@ import {
   createCodeSnippet,
   getAllCodeSnippetOfCurrentUser,
   getSingleCodeSnippetOfCurrentUser,
+  updateCodeSnippetById,
 } from "../controllers/codeSnippet.controller";
 import { verifyJWT } from "../middleware/auth.middleware";
 
@@ -13,5 +14,7 @@ codeSnippetRouter.post("/create", verifyJWT, createCodeSnippet);
 codeSnippetRouter.get("/", verifyJWT, getAllCodeSnippetOfCurrentUser);
 
 codeSnippetRouter.get("/:id", verifyJWT, getSingleCodeSnippetOfCurrentUser);
+
+codeSnippetRouter.put("/:id", verifyJWT, updateCodeSnippetById);
 
 export default codeSnippetRouter;
