@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.model.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { User } from "../models/user.model";
 import createHttpError from "http-errors";
-import { config } from "../utils/config.js";
-import { IUser, JwtPayloadWithId } from "../types/user.type.js";
+import { config } from "../utils/config";
+import { JwtPayloadWithId } from "../types/user.type";
 import { NextFunction, Request } from "express";
+import { asyncHandler } from "../utils/asyncHandler";
 
 export interface AuthRequest extends Request {
-  user: IUser;
+  userId: string;
 }
 
 export const verifyJWT = asyncHandler(
@@ -38,7 +38,7 @@ export const verifyJWT = asyncHandler(
       }
 
       const _req = req as AuthRequest;
-      _req.user = user;
+      _req.userId = user?._id;
       next();
     } catch (error) {
       const err = createHttpError(401, "Invalid access token error ");

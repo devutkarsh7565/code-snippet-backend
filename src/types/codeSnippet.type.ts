@@ -6,7 +6,7 @@ export interface ICodeSnippet {
   title: string;
   description: string;
   code: string;
-  language: string;
+  language: "typescript" | "javascript" | "html" | "css";
   owner: IUser;
   date: Date;
   tags: ITag[];
