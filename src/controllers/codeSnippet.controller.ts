@@ -66,4 +66,28 @@ const getAllCodeSnippetOfCurrentUser = asyncHandler(
   }
 );
 
-export { createCodeSnippet, getAllCodeSnippetOfCurrentUser };
+const getSingleCodeSnippetOfCurrentUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const _req = req as AuthRequest;
+    const { id } = req.params as { id: string };
+    const codeSnippet = await CodeSnippet.findOne({
+      _id: id,
+      owner: _req.userId,
+    });
+    if (!codeSnippet) {
+      const error = createHttpError(404, "No code snippet found");
+      return next(error);
+    }
+    return res.status(200).json({
+      success: true,
+      codeSnippet,
+      message: "code snippet for Current User fetched successfully",
+    });
+  }
+);
+
+export {
+  createCodeSnippet,
+  getAllCodeSnippetOfCurrentUser,
+  getSingleCodeSnippetOfCurrentUser,
+};
