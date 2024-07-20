@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 // routes import
 
-import userRouter from "../src/routes/user.route";
+import userRouter from "./routes/user.route";
 import codeSnippetRouter from "./routes/codeSnippet.route";
 
 app.use("/api/v1/users", userRouter);
