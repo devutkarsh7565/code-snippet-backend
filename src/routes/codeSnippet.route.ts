@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createCodeSnippet,
+  deleteCodeSnippetById,
   getAllCodeSnippetOfCurrentUser,
   getSingleCodeSnippetOfCurrentUser,
   updateCodeSnippetById,
@@ -16,5 +17,7 @@ codeSnippetRouter.get("/", verifyJWT, getAllCodeSnippetOfCurrentUser);
 codeSnippetRouter.get("/:id", verifyJWT, getSingleCodeSnippetOfCurrentUser);
 
 codeSnippetRouter.put("/:id", verifyJWT, updateCodeSnippetById);
+
+codeSnippetRouter.delete("/:id", verifyJWT, deleteCodeSnippetById);
 
 export default codeSnippetRouter;
