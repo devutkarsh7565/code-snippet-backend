@@ -18,7 +18,9 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, db_1.default)();
     const port = 4000;
     app_1.default.get("/", (req, res) => {
-        res.send("Hello World!");
+        res.json({
+            app: "code snippet app",
+        });
     });
     app_1.default.listen(port, () => {
         console.log(`listining on port :${port}`);

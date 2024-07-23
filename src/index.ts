@@ -6,7 +6,9 @@ const startServer = async () => {
   const port = 4000;
 
   app.get("/", (req, res) => {
-    res.send("Hello World!");
+    res.json({
+      app: "code snippet app",
+    });
   });
 
   app.listen(port, () => {
