@@ -1,7 +1,12 @@
 import { Router } from "express";
 // import path from "node:path";
 // import multer from "multer";
-import { createUser, userLoggedIn } from "../controllers/user.controller";
+import {
+  createUser,
+  getCurrentUser,
+  userLoggedIn,
+} from "../controllers/user.controller";
+import { verifyJWT } from "../middleware/auth.middleware";
 
 const router = Router();
 
@@ -14,5 +19,7 @@ router.route("/register").post(createUser);
 // upload.fields([{ name: "avatar", maxCount: 1 }]),
 
 router.post("/login", userLoggedIn);
+
+router.get("/current-user", verifyJWT, getCurrentUser);
 
 export default router;

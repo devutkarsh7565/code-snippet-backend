@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userLoggedIn = exports.createUser = void 0;
+exports.getCurrentUser = exports.userLoggedIn = exports.createUser = void 0;
 const http_errors_1 = __importDefault(require("http-errors"));
 const user_model_1 = require("../models/user.model");
 const asyncHandler_1 = require("../utils/asyncHandler");
@@ -123,3 +123,9 @@ const userLoggedIn = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awai
         .json({ accessToken, refreshToken, loggedInUser });
 }));
 exports.userLoggedIn = userLoggedIn;
+const getCurrentUser = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const _req = req;
+    const currentUser = yield user_model_1.User.findById(_req.userId).select("-password -refreshToken");
+    return res.status(200).json({ user: currentUser });
+}));
+exports.getCurrentUser = getCurrentUser;

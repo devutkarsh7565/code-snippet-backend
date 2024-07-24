@@ -4,6 +4,7 @@ import { User } from "../models/user.model";
 import { asyncHandler } from "../utils/asyncHandler";
 // import { uploadOnCloudinary } from "../utils/cloudinary";
 import { IUser } from "../types/user.type";
+import { AuthRequest } from "../middleware/auth.middleware";
 
 const generateAccessAndRefereshTokens = async (
   userId: string,
@@ -155,4 +156,12 @@ const userLoggedIn = asyncHandler(
   }
 );
 
-export { createUser, userLoggedIn };
+const getCurrentUser = asyncHandler(async (req, res) => {
+  const _req = req as AuthRequest;
+  const currentUser = await User.findById(_req.userId).select(
+    "-password -refreshToken"
+  );
+  return res.status(200).json({ user: currentUser });
+});
+
+export { createUser, userLoggedIn, getCurrentUser };
