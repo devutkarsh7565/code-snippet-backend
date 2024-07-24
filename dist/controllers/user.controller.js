@@ -16,7 +16,6 @@ exports.userLoggedIn = exports.createUser = void 0;
 const http_errors_1 = __importDefault(require("http-errors"));
 const user_model_1 = require("../models/user.model");
 const asyncHandler_1 = require("../utils/asyncHandler");
-const cloudinary_1 = require("../utils/cloudinary");
 const generateAccessAndRefereshTokens = (userId, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield user_model_1.User.findById(userId);
@@ -36,9 +35,8 @@ const generateAccessAndRefereshTokens = (userId, next) => __awaiter(void 0, void
     }
 });
 const createUser = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
     const { name, email, password } = req.body;
-    console.log(req.file, req === null || req === void 0 ? void 0 : req.files, "file");
+    // console.log(req.file, req?.files, "file");
     if (!name || !email || !password) {
         const error = (0, http_errors_1.default)(400, "All fields are required");
         return next(error);
@@ -54,27 +52,26 @@ const createUser = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awaite
     catch (err) {
         return next((0, http_errors_1.default)(500, "Error while getting user"));
     }
-    const files = req.files;
-    const avatarLocalPath = (_b = (_a = files === null || files === void 0 ? void 0 : files.avatar) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.path;
-    console.log(avatarLocalPath);
-    if (!avatarLocalPath) {
-        const error = (0, http_errors_1.default)(400, "avatar is required");
-        return next(error);
-    }
-    const avatar = yield (0, cloudinary_1.uploadOnCloudinary)(avatarLocalPath);
-    // console.log(avatar?.url, "avatar");
-    if (!avatar) {
-        const error = (0, http_errors_1.default)(500, "Error while uploading avatar");
-        return next(error);
-    }
+    // const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    // const avatarLocalPath = files?.avatar?.[0]?.path;
+    // console.log(avatarLocalPath);
+    // if (!avatarLocalPath) {
+    //   const error = createHttpError(400, "avatar is required");
+    //   return next(error);
+    // }
+    // const avatar = await uploadOnCloudinary(avatarLocalPath);
+    // // console.log(avatar?.url, "avatar");
+    // if (!avatar) {
+    //   const error = createHttpError(500, "Error while uploading avatar");
+    //   return next(error);
+    // }
     let newUser;
-    console.log("user crossed", avatar);
+    // console.log("user crossed", avatar);
     try {
         newUser = yield user_model_1.User.create({
             name,
             email,
             password,
-            avatar: avatar === null || avatar === void 0 ? void 0 : avatar.url,
         });
     }
     catch (err) {
