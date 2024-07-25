@@ -13,6 +13,7 @@ export interface AuthRequest extends Request {
 export const verifyJWT = asyncHandler(
   async (req: Request, _, next: NextFunction) => {
     try {
+      console.log(req.cookies, "cookies .....");
       const token =
         req.cookies?.accessToken ||
         req.header("Authorization")?.replace("Bearer ", "");

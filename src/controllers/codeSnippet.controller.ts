@@ -7,9 +7,9 @@ import { SearchCriteria } from "../types/codeSnippet.type";
 
 const createCodeSnippet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { title, description, code, language } = req.body;
+    const { title, description, code, language, tags } = req.body;
 
-    if (!title || !description || !code || !language) {
+    if (!title || !description || !code || !language || !tags) {
       const error = createHttpError(400, "All fields are required");
       return next(error);
     }

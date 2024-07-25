@@ -21,6 +21,7 @@ const asyncHandler_1 = require("../utils/asyncHandler");
 exports.verifyJWT = (0, asyncHandler_1.asyncHandler)((req, _, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
+        console.log(req.cookies, "cookies .....");
         const token = ((_a = req.cookies) === null || _a === void 0 ? void 0 : _a.accessToken) ||
             ((_b = req.header("Authorization")) === null || _b === void 0 ? void 0 : _b.replace("Bearer ", ""));
         // console.log(token);

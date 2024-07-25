@@ -6,10 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const config_1 = require("./utils/config");
 const app = (0, express_1.default)();
 //these are the middleware methods,if you use the sintax app.use then you are using middleware
 app.use((0, cors_1.default)({
-    origin: process.env.CORS_ORIGIN,
+    origin: [config_1.config.corsOrigin],
     credentials: true,
 }));
 app.use(express_1.default.json());
@@ -19,6 +20,8 @@ app.use((0, cookie_parser_1.default)());
 // routes import
 const user_route_1 = __importDefault(require("./routes/user.route"));
 const codeSnippet_route_1 = __importDefault(require("./routes/codeSnippet.route"));
+const tags_route_1 = __importDefault(require("./routes/tags.route"));
 app.use("/api/v1/users", user_route_1.default);
 app.use("/api/v1/code-snippets", codeSnippet_route_1.default);
+app.use("/api/v1/tags", tags_route_1.default);
 exports.default = app;

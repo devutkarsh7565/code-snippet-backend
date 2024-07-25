@@ -112,14 +112,16 @@ const userLoggedIn = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awai
     }
     const { accessToken, refreshToken } = tokens;
     const loggedInUser = yield user_model_1.User.findById(user._id).select("-password -refreshToken");
-    const options = {
-        httpOnly: true,
-        secure: true,
-    };
     return res
         .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
+        .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        sameSite: "none",
+    })
+        .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        sameSite: "none",
+    })
         .json({ accessToken, refreshToken, loggedInUser });
 }));
 exports.userLoggedIn = userLoggedIn;

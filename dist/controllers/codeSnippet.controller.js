@@ -17,8 +17,8 @@ const asyncHandler_1 = require("../utils/asyncHandler");
 const http_errors_1 = __importDefault(require("http-errors"));
 const codeSnippet_model_1 = require("../models/codeSnippet.model");
 const createCodeSnippet = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, description, code, language } = req.body;
-    if (!title || !description || !code || !language) {
+    const { title, description, code, language, tags } = req.body;
+    if (!title || !description || !code || !language || !tags) {
         const error = (0, http_errors_1.default)(400, "All fields are required");
         return next(error);
     }

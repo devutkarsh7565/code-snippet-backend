@@ -143,15 +143,16 @@ const userLoggedIn = asyncHandler(
       "-password -refreshToken"
     );
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
-
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        sameSite: "none",
+      })
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        sameSite: "none",
+      })
       .json({ accessToken, refreshToken, loggedInUser });
   }
 );
