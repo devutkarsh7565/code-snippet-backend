@@ -31,4 +31,20 @@ const createTags = asyncHandler(
   }
 );
 
-export { createTags };
+const getAllTagsOfCurrentUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const _req = req as AuthRequest;
+    const tags = await Tag.find({ owner: _req.userId });
+    if (!tags) {
+      const error = createHttpError(404, "Tags not found");
+      return next(error);
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Tags fetched successfully",
+      tags,
+    });
+  }
+);
+
+export { createTags, getAllTagsOfCurrentUser };

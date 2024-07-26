@@ -16,6 +16,7 @@ exports.deleteCodeSnippetById = exports.updateCodeSnippetById = exports.getSingl
 const asyncHandler_1 = require("../utils/asyncHandler");
 const http_errors_1 = __importDefault(require("http-errors"));
 const codeSnippet_model_1 = require("../models/codeSnippet.model");
+const tag_model_1 = require("../models/tag.model");
 const createCodeSnippet = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, description, code, language, tags } = req.body;
     if (!title || !description || !code || !language || !tags) {
@@ -32,12 +33,22 @@ const createCodeSnippet = (0, asyncHandler_1.asyncHandler)((req, res, next) => _
         const error = (0, http_errors_1.default)(409, "code snippet already exist with this title");
         return next(error);
     }
+    const tagIds = yield Promise.all(tags.map((tagName) => __awaiter(void 0, void 0, void 0, function* () {
+        const tag = yield tag_model_1.Tag.findOne({ name: tagName, owner: _req.userId });
+        // If the tag does not exist, create it
+        if (!tag) {
+            const error = (0, http_errors_1.default)(404, `No tag found with name ${tagName}`);
+            return next(error);
+        }
+        return tag._id;
+    })));
     const newCodeSnippet = yield codeSnippet_model_1.CodeSnippet.create({
         title,
         description,
         code,
         language,
         owner: _req.userId,
+        tags: tagIds,
     });
     if (!newCodeSnippet) {
         const error = (0, http_errors_1.default)(500, "Error while creating code snippet");
@@ -100,8 +111,8 @@ exports.getSingleCodeSnippetOfCurrentUser = getSingleCodeSnippetOfCurrentUser;
 const updateCodeSnippetById = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const _req = req;
     const { id } = req.params;
-    const { title, description, code, language } = req.body;
-    if (!title || !description || !code || !language) {
+    const { title, description, code, language, tags } = req.body;
+    if (!title || !description || !code || !language || !tags) {
         const error = (0, http_errors_1.default)(400, "All fields are required");
         return next(error);
     }
@@ -113,7 +124,23 @@ const updateCodeSnippetById = (0, asyncHandler_1.asyncHandler)((req, res, next) 
         const error = (0, http_errors_1.default)(404, "No code snippet found");
         return next(error);
     }
-    const updatedCodeSnippet = yield codeSnippet_model_1.CodeSnippet.findByIdAndUpdate({ _id: id }, { title, description, code, language }, { new: true });
+    // Ensure tags are handled properly
+    const tagIds = yield Promise.all(tags.map((tagName) => __awaiter(void 0, void 0, void 0, function* () {
+        const tag = yield tag_model_1.Tag.findOne({ name: tagName, owner: _req.userId });
+        // If the tag does not exist, create it
+        if (!tag) {
+            const error = (0, http_errors_1.default)(404, `No tag found with name ${tagName}`);
+            return next(error);
+        }
+        return tag._id;
+    })));
+    const updatedCodeSnippet = yield codeSnippet_model_1.CodeSnippet.findByIdAndUpdate({ _id: id }, {
+        title,
+        description,
+        code,
+        language,
+        tags: tagIds,
+    }, { new: true });
     if (!updatedCodeSnippet) {
         const error = (0, http_errors_1.default)(500, "Error while updating code snippet");
         return next(error);

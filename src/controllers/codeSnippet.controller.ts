@@ -4,6 +4,7 @@ import createHttpError from "http-errors";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { CodeSnippet } from "../models/codeSnippet.model";
 import { SearchCriteria } from "../types/codeSnippet.type";
+import { Tag } from "../models/tag.model";
 
 const createCodeSnippet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -30,12 +31,30 @@ const createCodeSnippet = asyncHandler(
       return next(error);
     }
 
+    const tagIds = await Promise.all(
+      tags.map(async (tagName: string) => {
+        const tag = await Tag.findOne({ name: tagName, owner: _req.userId });
+
+        // If the tag does not exist, create it
+        if (!tag) {
+          const error = createHttpError(
+            404,
+            `No tag found with name ${tagName}`
+          );
+          return next(error);
+        }
+
+        return tag._id;
+      })
+    );
+
     const newCodeSnippet = await CodeSnippet.create({
       title,
       description,
       code,
       language,
       owner: _req.userId,
+      tags: tagIds,
     });
 
     if (!newCodeSnippet) {
@@ -115,8 +134,8 @@ const updateCodeSnippetById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const _req = req as AuthRequest;
     const { id } = req.params as { id: string };
-    const { title, description, code, language } = req.body;
-    if (!title || !description || !code || !language) {
+    const { title, description, code, language, tags } = req.body;
+    if (!title || !description || !code || !language || !tags) {
       const error = createHttpError(400, "All fields are required");
       return next(error);
     }
@@ -128,9 +147,33 @@ const updateCodeSnippetById = asyncHandler(
       const error = createHttpError(404, "No code snippet found");
       return next(error);
     }
+
+    // Ensure tags are handled properly
+    const tagIds = await Promise.all(
+      tags.map(async (tagName: string) => {
+        const tag = await Tag.findOne({ name: tagName, owner: _req.userId });
+
+        // If the tag does not exist, create it
+        if (!tag) {
+          const error = createHttpError(
+            404,
+            `No tag found with name ${tagName}`
+          );
+          return next(error);
+        }
+
+        return tag._id;
+      })
+    );
     const updatedCodeSnippet = await CodeSnippet.findByIdAndUpdate(
       { _id: id },
-      { title, description, code, language },
+      {
+        title,
+        description,
+        code,
+        language,
+        tags: tagIds,
+      },
       { new: true }
     );
     if (!updatedCodeSnippet) {

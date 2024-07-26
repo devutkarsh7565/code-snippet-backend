@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTags = void 0;
+exports.getAllTagsOfCurrentUser = exports.createTags = void 0;
 const asyncHandler_1 = require("../utils/asyncHandler");
 const http_errors_1 = __importDefault(require("http-errors"));
 const tag_model_1 = require("../models/tag.model");
@@ -39,3 +39,17 @@ const createTags = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awaite
     });
 }));
 exports.createTags = createTags;
+const getAllTagsOfCurrentUser = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const _req = req;
+    const tags = yield tag_model_1.Tag.find({ owner: _req.userId });
+    if (!tags) {
+        const error = (0, http_errors_1.default)(404, "Tags not found");
+        return next(error);
+    }
+    return res.status(200).json({
+        success: true,
+        message: "Tags fetched successfully",
+        tags,
+    });
+}));
+exports.getAllTagsOfCurrentUser = getAllTagsOfCurrentUser;
