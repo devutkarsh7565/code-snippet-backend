@@ -102,9 +102,36 @@ const getAllCodeSnippetOfCurrentUser = asyncHandler(
       return next(error);
     }
 
+    // Fetch tag names for each tag ID
+    const codeSnippetsWithTags = await Promise.all(
+      codeSnippets.map(async (codeSnippet) => {
+        const tagsWithNames = await Promise.all(
+          codeSnippet.tags.map(async (tagId: string) => {
+            const tag = await Tag.findOne({ _id: tagId, owner: _req.userId });
+
+            // If the tag does not exist, create it
+            if (!tag) {
+              const error = createHttpError(
+                404,
+                `No tag found with ID ${tagId}`
+              );
+              return next(error);
+            }
+
+            return tag.name;
+          })
+        );
+
+        return {
+          ...codeSnippet.toObject(), // Convert Mongoose document to plain JavaScript object
+          tags: tagsWithNames, // Replace tag IDs with tag names
+        };
+      })
+    );
+
     return res.status(200).json({
       success: true,
-      codeSnippets,
+      codeSnippetsWithTags,
       message: "Code snippets for current user fetched successfully",
     });
   }

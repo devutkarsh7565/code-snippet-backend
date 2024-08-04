@@ -83,9 +83,22 @@ const getAllCodeSnippetOfCurrentUser = (0, asyncHandler_1.asyncHandler)((req, re
         const error = (0, http_errors_1.default)(404, "No code snippets found");
         return next(error);
     }
+    // Fetch tag names for each tag ID
+    const codeSnippetsWithTags = yield Promise.all(codeSnippets.map((codeSnippet) => __awaiter(void 0, void 0, void 0, function* () {
+        const tagsWithNames = yield Promise.all(codeSnippet.tags.map((tagId) => __awaiter(void 0, void 0, void 0, function* () {
+            const tag = yield tag_model_1.Tag.findOne({ _id: tagId, owner: _req.userId });
+            // If the tag does not exist, create it
+            if (!tag) {
+                const error = (0, http_errors_1.default)(404, `No tag found with ID ${tagId}`);
+                return next(error);
+            }
+            return tag.name;
+        })));
+        return Object.assign(Object.assign({}, codeSnippet.toObject()), { tags: tagsWithNames });
+    })));
     return res.status(200).json({
         success: true,
-        codeSnippets,
+        codeSnippetsWithTags,
         message: "Code snippets for current user fetched successfully",
     });
 }));

@@ -1,5 +1,4 @@
 import { Types } from "mongoose";
-import { ITag } from "./tag.type";
 import { IUser } from "./user.type";
 
 export interface ICodeSnippet {
@@ -10,7 +9,7 @@ export interface ICodeSnippet {
   language: "typescript" | "javascript" | "html" | "css";
   owner: IUser;
   date: Date;
-  tags: ITag[];
+  tags: string[];
   createdAt: Date;
   updatedAt: Date;
   __v: number;

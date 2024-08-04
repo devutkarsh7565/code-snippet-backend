@@ -23,8 +23,8 @@ exports.verifyJWT = (0, asyncHandler_1.asyncHandler)((req, _, next) => __awaiter
     try {
         console.log(req.cookies, "cookies .....");
         const token = ((_a = req.cookies) === null || _a === void 0 ? void 0 : _a.accessToken) ||
-            ((_b = req.header("Authorization")) === null || _b === void 0 ? void 0 : _b.replace("Bearer ", ""));
-        // console.log(token);
+            (yield ((_b = req.header("Authorization")) === null || _b === void 0 ? void 0 : _b.replace("Bearer ", "")));
+        console.log(token, "token is token");
         if (!token) {
             const error = (0, http_errors_1.default)(401, "Unauthorized request");
             return next(error);
