@@ -63,7 +63,7 @@ const createCodeSnippet = (0, asyncHandler_1.asyncHandler)((req, res, next) => _
 exports.createCodeSnippet = createCodeSnippet;
 const getAllCodeSnippetOfCurrentUser = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const _req = req;
-    const { title, description } = req.query;
+    const { title, description, tag } = req.query;
     console.log(title);
     // Define the searchCriteria with the appropriate type
     const searchCriteria = {
@@ -77,6 +77,9 @@ const getAllCodeSnippetOfCurrentUser = (0, asyncHandler_1.asyncHandler)((req, re
             $regex: description,
             $options: "i",
         };
+    }
+    if (tag) {
+        searchCriteria.tags = { $in: [tag] };
     }
     const codeSnippets = yield codeSnippet_model_1.CodeSnippet.find(searchCriteria);
     if (!codeSnippets || codeSnippets.length === 0) {

@@ -73,9 +73,10 @@ const createCodeSnippet = asyncHandler(
 const getAllCodeSnippetOfCurrentUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const _req = req as AuthRequest;
-    const { title, description } = req.query as {
+    const { title, description, tag } = req.query as {
       title: string;
       description: string;
+      tag: string;
     };
 
     console.log(title);
@@ -94,6 +95,10 @@ const getAllCodeSnippetOfCurrentUser = asyncHandler(
         $regex: description as string,
         $options: "i",
       };
+    }
+
+    if (tag) {
+      searchCriteria.tags = { $in: [tag] };
     }
 
     const codeSnippets = await CodeSnippet.find(searchCriteria);
