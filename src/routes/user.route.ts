@@ -4,6 +4,7 @@ import { Router } from "express";
 import {
   createUser,
   getCurrentUser,
+  logoutUser,
   userLoggedIn,
 } from "../controllers/user.controller";
 import { verifyJWT } from "../middleware/auth.middleware";
@@ -21,5 +22,6 @@ router.route("/register").post(createUser);
 router.post("/login", userLoggedIn);
 
 router.get("/current-user", verifyJWT, getCurrentUser);
+router.post("/logout", verifyJWT, logoutUser);
 
 export default router;

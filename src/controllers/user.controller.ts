@@ -165,4 +165,25 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   return res.status(200).json({ user: currentUser });
 });
 
-export { createUser, userLoggedIn, getCurrentUser };
+const logoutUser = asyncHandler(async (req, res) => {
+  const _req = req as AuthRequest;
+  await User.findByIdAndUpdate(
+    _req.userId,
+    {
+      $unset: { refreshToken: 1 },
+    },
+    { new: true }
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json({ message: "user logged out Successfully" });
+});
+
+export { createUser, userLoggedIn, getCurrentUser, logoutUser };

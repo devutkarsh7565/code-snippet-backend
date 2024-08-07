@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCurrentUser = exports.userLoggedIn = exports.createUser = void 0;
+exports.logoutUser = exports.getCurrentUser = exports.userLoggedIn = exports.createUser = void 0;
 const http_errors_1 = __importDefault(require("http-errors"));
 const user_model_1 = require("../models/user.model");
 const asyncHandler_1 = require("../utils/asyncHandler");
@@ -131,3 +131,19 @@ const getCurrentUser = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(
     return res.status(200).json({ user: currentUser });
 }));
 exports.getCurrentUser = getCurrentUser;
+const logoutUser = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const _req = req;
+    yield user_model_1.User.findByIdAndUpdate(_req.userId, {
+        $unset: { refreshToken: 1 },
+    }, { new: true });
+    const options = {
+        httpOnly: true,
+        secure: true,
+    };
+    res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json({ message: "user logged out Successfully" });
+}));
+exports.logoutUser = logoutUser;
