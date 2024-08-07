@@ -14,5 +14,5 @@ router.route("/register").post(user_controller_1.createUser);
 // upload.fields([{ name: "avatar", maxCount: 1 }]),
 router.post("/login", user_controller_1.userLoggedIn);
 router.get("/current-user", auth_middleware_1.verifyJWT, user_controller_1.getCurrentUser);
-router.post("/logout", auth_middleware_1.verifyJWT, user_controller_1.logoutUser);
+router.put("/logout", auth_middleware_1.verifyJWT, user_controller_1.logoutUser);
 exports.default = router;
